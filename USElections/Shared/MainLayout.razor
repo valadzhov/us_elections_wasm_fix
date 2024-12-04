@@ -1,0 +1,72 @@
+@inherits LayoutComponentBase
+@using USElectionsData
+@using Models.USElectionsData
+@using State
+@inject IUSElectionsDataService USElectionsDataService
+@inject IStateService StateService
+
+<div class="column-layout master-view-container">
+    <IgbNavbar class="navbar" master_view-scope>
+        <IgbIconButton slot="start" Variant="IconButtonVariant.Flat" @onclick="@(e => _navDrawer!.ToggleAsync())" class="icon-button" master_view-scope>
+            <span class="material-icons icon">
+                menu
+            </span>
+            <IgbRipple></IgbRipple>
+        </IgbIconButton>
+        <div class="row-layout group">
+            <h6 class="h6">
+                US Presidential Elections over the years
+            </h6>
+        </div>
+    </IgbNavbar>
+    <div class="row-layout group_1"></div>
+    <div class="row-layout group_2">
+        <IgbNavDrawer Open="true" Position="NavDrawerPosition.Relative" @ref="_navDrawer" class="nav-drawer" master_view-scope>
+            <IgbNavDrawerHeaderItem>
+                <div>YEAR</div>
+            </IgbNavDrawerHeaderItem>
+            @foreach (var item in _uSElectionsDataYearModel)
+            {
+                <IgbNavDrawerItem @onclick="() => NavDrawerItemClick(item)">
+                    <div slot="content">@item.Year</div>
+                </IgbNavDrawerItem>
+            }
+        </IgbNavDrawer>
+        <div class="view-container">
+            @Body
+        </div>
+    </div>
+    <div class="row-layout group_1"></div>
+    <div class="row-layout group_3">
+        <span class="material-icons icon_1">
+            star
+        </span>
+        <div class="row-layout group_4">
+            <p class="typography__body-2 text">
+                Powered by
+            </p>
+            <a href="https://www.appbuilder.dev/" class="typography__body-2 hyperlink">
+                App Builder
+            </a>
+        </div>
+        <span class="material-icons icon_1">
+            star
+        </span>
+    </div>
+</div>
+
+@code {
+    private IgbNavDrawer _navDrawer;
+    private List<YearModel> _uSElectionsDataYearModel = new();
+
+    public void NavDrawerItemClick(YearModel item)
+    {
+        StateService.CurrentlyChosenYear.OnNext(item.Year);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _uSElectionsDataYearModel = await USElectionsDataService.GetYearModelList();
+        await base.OnInitializedAsync();
+    }
+}

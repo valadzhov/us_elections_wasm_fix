@@ -1,0 +1,249 @@
+@page "/"
+@page "/candidates_and_votes"
+@using State
+@using USElectionsData
+@using Models.USElectionsData
+@using System.Reactive.Subjects
+@using System.Reactive.Linq
+@inject IStateService StateService
+@inject IUSElectionsDataService USElectionsDataService
+@implements IDisposable;
+
+<div class="row-layout candidates-and-votes-container">
+    <div class="column-layout group">
+        <div class="row-layout header">
+            <div class="row-layout year_container">
+                <div class="column-layout year">
+                    <div class="row-layout group_1">
+                        <span class="material-icons icon">
+                            star
+                        </span>
+                        <span class="material-icons icon">
+                            star
+                        </span>
+                        <span class="material-icons icon">
+                            star
+                        </span>
+                        <span class="material-icons icon">
+                            star
+                        </span>
+                        <span class="material-icons icon">
+                            star
+                        </span>
+                    </div>
+                    <div class="row-layout group_2">
+                        <div class="column-layout group_3">
+                            <h2 class="content">
+                                @StateService.CurrentlyChosenYear.Value
+                            </h2>
+                        </div>
+                    </div>
+                    <div class="row-layout group_4">
+                        <p class="typography__subtitle-2 text">
+                            P R E S I D E N T I A L
+                        </p>
+                    </div>
+                    <div class="row-layout group_5">
+                        <p class="typography__subtitle-2 text_1">
+                            E L E C T I O N
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="row-layout candidates">
+                <IgbCard class="card" candidates_and_votes-scope>
+                    <div class="group_6">
+                        <IgbCardHeader>
+                            <h3 slot="title">
+                        </h3>
+                            <h5 slot="subtitle">
+                        </h5>
+                        </IgbCardHeader>
+                        <IgbCardContent class="body-content" candidates_and_votes-scope>
+                            <div class="column-layout group_7">
+                                <div class="column-layout group_8">
+                                    <h5 class="h5">
+                                        @_democratCandidate?.Name
+                                    </h5>
+                                    <div class="row-layout dm_pill_small">
+                                        <p class="typography__overline text_1">
+                                            DEMOCRATIC
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row-layout group_9">
+                                    <div class="column-layout group_10">
+                                        <h4 class="content">
+                                            @_electoralVotesDemocrat?.Votes
+                                        </h4>
+                                        <p class="typography__subtitle-2 text_2">
+                                            Electoral Votes
+                                        </p>
+                                    </div>
+                                    <div class="column-layout group_11">
+                                        <h4 class="content">
+                                            @_popularVotesDemocrat?.Votes
+                                        </h4>
+                                        <p class="typography__subtitle-2 text_2">
+                                            Popular Votes
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </IgbCardContent>
+                    </div>
+                    <IgbCardMedia class="media-content" candidates_and_votes-scope>
+                        <img src="@(_democratCandidate?.ImageFull ?? default)" class="image" />
+                    </IgbCardMedia>
+                </IgbCard>
+                <IgbCard class="card" candidates_and_votes-scope>
+                    <div class="group_6">
+                        <IgbCardHeader>
+                            <h3 slot="title">
+                        </h3>
+                            <h5 slot="subtitle">
+                        </h5>
+                        </IgbCardHeader>
+                        <IgbCardContent class="body-content" candidates_and_votes-scope>
+                            <div class="column-layout group_7">
+                                <div class="column-layout group_8">
+                                    <h5 class="h5">
+                                        @_republicanCandidate?.Name
+                                    </h5>
+                                    <div class="row-layout rp_pill_small">
+                                        <p class="typography__overline text_1">
+                                            REPUBLICAN
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row-layout group_9">
+                                    <div class="column-layout group_10">
+                                        <h4 class="h4">
+                                            @_electoralVotesRepublican?.Votes
+                                        </h4>
+                                        <p class="typography__subtitle-2 text_2">
+                                            Electoral Votes
+                                        </p>
+                                    </div>
+                                    <div class="column-layout group_11">
+                                        <h4 class="h4">
+                                            @_popularVotesRepublican?.Votes
+                                        </h4>
+                                        <p class="typography__subtitle-2 text_2">
+                                            Popular Votes
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </IgbCardContent>
+                    </div>
+                    <IgbCardMedia class="media-content" candidates_and_votes-scope>
+                        <img src="@(_republicanCandidate?.ImageFull ?? default)" class="image" />
+                    </IgbCardMedia>
+                </IgbCard>
+            </div>
+        </div>
+        <div class="row-layout pies_and_grid">
+            <div class="row-layout pie_charts">
+                <div class="column-layout group_12">
+                    <p class="typography__subtitle-2 content">
+                        Electoral Vote
+                    </p>
+                    <IgbPieChart DataSource="@_uSElectionsDataVoteResult" StartAngle="90" LabelInnerColor="#FAFAFA" OthersCategoryThreshold="0.5" LabelMemberPath="ResultAsString" ValueMemberPath="ResultAsNumber" class="pie-chart" candidates_and_votes-scope></IgbPieChart>
+                </div>
+                <div class="column-layout group_12">
+                    <p class="typography__subtitle-2 content">
+                        Popular Vote
+                    </p>
+                    <IgbPieChart DataSource="@_uSElectionsDataVoteResult1" StartAngle="90" LabelInnerColor="#FAFAFA" OthersCategoryThreshold="0.5" LabelMemberPath="ResultAsString" ValueMemberPath="ResultAsNumber" class="pie-chart" candidates_and_votes-scope></IgbPieChart>
+                </div>
+            </div>
+            <div class="column-layout group_13">
+                <IgbGrid Data="@_uSElectionsDataCandidateVoteResult" PrimaryKey="Party" AllowFiltering="true" FilterMode="FilterMode.ExcelStyleFilter" class="ig-typography grid" candidates_and_votes-scope>
+                    <IgbColumn Field="Party" DataType="GridColumnDataType.String" Header="Party" Sortable="true" Selectable="false"></IgbColumn>
+                    <IgbColumn Field="CandidateName" DataType="GridColumnDataType.String" Header="Candidate" Sortable="true" Selectable="false"></IgbColumn>
+                    <IgbColumn Field="ElectoralVotesNumber" DataType="GridColumnDataType.Number" Header="Electoral Votes" Sortable="true" Selectable="false"></IgbColumn>
+                    <IgbColumn Field="ElectoralVotesPercentage" DataType="GridColumnDataType.Number" Header="Electoral Votes (%)" Sortable="true" Selectable="false"></IgbColumn>
+                    <IgbColumn Field="PopularVotesNumber" DataType="GridColumnDataType.Number" Header="Popular Votes" Sortable="true" Selectable="false"></IgbColumn>
+                    <IgbColumn Field="PopularVotesPercentage" DataType="GridColumnDataType.Number" Header="Popular Votes (%)" Sortable="true" Selectable="false"></IgbColumn>
+                </IgbGrid>
+            </div>
+        </div>
+        <div class="column-layout group_13">
+            <p class="typography__subtitle-2 text_3">
+                Votes by State
+            </p>
+            <IgbCategoryChart DataSource="@_uSElectionsDataStateVoteResult" ChartType="CategoryChartType.Column" XAxisLabelAngle="60" ComputedPlotAreaMarginMode="ComputedPlotAreaMarginMode.Series" class="category-chart" candidates_and_votes-scope></IgbCategoryChart>
+            <div class="row-layout group_14">
+                <div class="row-layout sources_pill_small">
+                    <p class="typography__overline text_4">
+                        SOURCES
+                    </p>
+                </div>
+                <div class="row-layout group_15">
+                    <a href="https://apnews.com/" class="typography__caption hyperlink">
+                        AP News,
+                    </a>
+                    <a href="https://www.politico.com/" class="typography__caption hyperlink">
+                        Politico,
+                    </a>
+                    <a href="https://edition.cnn.com/" class="typography__caption hyperlink">
+                        CNN Politics
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private Candidate _democratCandidate;
+    private VoteCountResult _electoralVotesDemocrat;
+    private VoteCountResult _popularVotesDemocrat;
+    private Candidate _republicanCandidate;
+    private VoteCountResult _electoralVotesRepublican;
+    private VoteCountResult _popularVotesRepublican;
+    private List<VoteResult> _uSElectionsDataVoteResult = new();
+    private List<VoteResult> _uSElectionsDataVoteResult1 = new();
+    private List<CandidateVoteResult> _uSElectionsDataCandidateVoteResult = new();
+    private List<StateVoteResult> _uSElectionsDataStateVoteResult = new();
+    private Subject<object> destroy = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        USElectionsDataService.DemocratCandidate.TakeUntil(this.destroy).Subscribe(x => { _democratCandidate = x; InvokeAsync(StateHasChanged); });
+        USElectionsDataService.ElectoralVotesDemocrat.TakeUntil(this.destroy).Subscribe(x => { _electoralVotesDemocrat = x; InvokeAsync(StateHasChanged); });
+        USElectionsDataService.PopularVotesDemocrat.TakeUntil(this.destroy).Subscribe(x => { _popularVotesDemocrat = x; InvokeAsync(StateHasChanged); });
+        USElectionsDataService.RepublicanCandidate.TakeUntil(this.destroy).Subscribe(x => { _republicanCandidate = x; InvokeAsync(StateHasChanged); });
+        USElectionsDataService.ElectoralVotesRepublican.TakeUntil(this.destroy).Subscribe(x => { _electoralVotesRepublican = x; InvokeAsync(StateHasChanged); });
+        USElectionsDataService.PopularVotesRepublican.TakeUntil(this.destroy).Subscribe(x => { _popularVotesRepublican = x; InvokeAsync(StateHasChanged); });
+        StateService.CurrentlyChosenYear.TakeUntil(this.destroy).Subscribe(async _ =>
+        {
+            _uSElectionsDataVoteResult = await USElectionsDataService.GetVoteResultList((int)StateService.CurrentlyChosenYear.Value);
+            await InvokeAsync(StateHasChanged);
+        });
+        StateService.CurrentlyChosenYear.TakeUntil(this.destroy).Subscribe(async _ =>
+        {
+            _uSElectionsDataVoteResult1 = await USElectionsDataService.GetVoteResultList1((int)StateService.CurrentlyChosenYear.Value);
+            await InvokeAsync(StateHasChanged);
+        });
+        StateService.CurrentlyChosenYear.TakeUntil(this.destroy).Subscribe(async _ =>
+        {
+            _uSElectionsDataCandidateVoteResult = await USElectionsDataService.GetCandidateVoteResultList((int)StateService.CurrentlyChosenYear.Value);
+            await InvokeAsync(StateHasChanged);
+        });
+        StateService.CurrentlyChosenYear.TakeUntil(this.destroy).Subscribe(async _ =>
+        {
+            _uSElectionsDataStateVoteResult = await USElectionsDataService.GetStateVoteResultList((int)StateService.CurrentlyChosenYear.Value);
+            await InvokeAsync(StateHasChanged);
+        });
+        StateService.CurrentlyChosenYear.TakeUntil(this.destroy).Subscribe(x => InvokeAsync(StateHasChanged));
+        await base.OnInitializedAsync();
+    }
+
+    public void Dispose()
+    {
+        this.destroy.OnNext(null);
+        this.destroy.Dispose();
+    }
+}
